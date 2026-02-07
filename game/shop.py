@@ -22,7 +22,7 @@ class Shop:
         for item in self.items:
             item.draw(screen)
 
-    def init_items(self, items: list[]):
+    def init_items(self, items: list):
         self.items = items
 
         # starting position
