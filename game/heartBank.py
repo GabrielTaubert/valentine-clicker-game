@@ -13,8 +13,9 @@ class HeartBank:
     def __init__(self):
         self.hearts = 0
 
-    def addHearts(self, amount):
+    def addHearts(self, amount ):
         self.hearts += amount
+        print(self.hearts)
 
     def removeHearts(self, amount):
         self.hearts -= amount

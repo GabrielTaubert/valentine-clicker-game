@@ -1,5 +1,6 @@
 import pygame
 from game.heart import Heart
+from game.heartBank import HeartBank
 
 #initialization
 pygame.init()
@@ -19,6 +20,8 @@ heart = Heart(
     position=(WIDTH // 2, HEIGHT // 2)
 )
 
+bank = HeartBank()
+
 #game
 while running:
     for event in pygame.event.get():
@@ -27,8 +30,7 @@ while running:
 
         gained_hearts = heart.handle_event(event)
         if gained_hearts > 0:
-            print("hearts gained:", gained_hearts)
-            # bank.addHearts(gained_hearts)
+            bank.addHearts(gained_hearts)
 
     screen.fill((255, 230, 240))
     heart.draw(screen)
