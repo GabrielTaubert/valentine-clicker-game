@@ -9,6 +9,10 @@ maybe an animation would be nice.
 """
 
 import pygame
+import random
+
+from game.floating_text import FloatingText
+
 
 class Heart:
 
@@ -18,10 +22,15 @@ class Heart:
         self.rect = self.image.get_rect(center=position)
         self.hearts_per_click = 1
         self.automatic_hearts_per_second = 0
+
         self.is_pressed = False
         self.press_timer = 0
         self.press_duration = 0.1
-        self.press_timer = 0
+
+        self.floating_numbers = []
+
+        self.font = pygame.font.Font("assets/font/Minecraft.ttf", 50)
+        self.number_font = pygame.font.Font("assets/font/Minecraft.ttf", 30)
 
     def upgrade_hearts_per_click(self, amount):
         self.hearts_per_click += amount
@@ -31,6 +40,23 @@ class Heart:
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+        for ft in self.floating_numbers:
+            ft.draw(screen)
+
+    def create_floating_number(self):
+
+        offset_x = random.randint(-300, 300)
+        offset_y = random.randint(-300, 300)
+
+        position = (
+            self.rect.centerx + offset_x,
+            self.rect.centery + offset_y
+        )
+
+        floating_number = FloatingText(f"+{self.hearts_per_click}", position, self.number_font )
+
+        self.floating_numbers.append(floating_number)
 
     def shrink(self):
         self.is_pressed = True
@@ -54,10 +80,16 @@ class Heart:
                 self.rect = self.image.get_rect(center=center)
                 self.is_pressed = False
 
+        for ft in self.floating_numbers:
+            ft.update(dt)
+            if ft.is_dead():
+                self.floating_numbers.remove(ft)
+
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # linke Maustaste
                 if self.rect.collidepoint(event.pos):
                     self.shrink()
+                    self.create_floating_number()
                     return self.hearts_per_click
         return 0

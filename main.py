@@ -77,19 +77,18 @@ auto_timer = 0
 #game
 while running:
 
+    dt = clock.tick(60) / 1000
+    auto_timer += dt
+    heart.update(dt)
+
+    if auto_timer >= 1:  # triggers every second
+        automatic_hearts = heart.automatic_hearts_per_second
+        bank.addHearts(automatic_hearts)
+        auto_timer = 0
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-        dt = clock.tick(60) / 1000
-        auto_timer += dt
-
-        heart.update(dt)
-
-        if auto_timer >= 1: #triggers every second
-            automatic_hearts = heart.automatic_hearts_per_second
-            bank.addHearts(automatic_hearts)
-            auto_timer = 0
 
         gained_hearts = heart.handle_event(event)
         if gained_hearts > 0:
