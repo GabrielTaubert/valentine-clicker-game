@@ -12,9 +12,9 @@ after the buy of a item, a costum message should appear.
 
 class Item:
 
-    def __init__(self, price, name, image):
-        self.price = price
-        self.name = name
+    def __init__(self, image):
+        self.price = 0
+        self.name = ""
         self.image = image
         self.rect = self.image.get_rect()
         self.is_bought = False

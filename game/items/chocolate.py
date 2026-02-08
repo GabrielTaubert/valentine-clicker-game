@@ -8,5 +8,7 @@ from game.item import Item
 
 class Chocolate(Item):
 
-    def __init__(self, price, name, image):
-        Item.__init__(self, price, name, image)
+    def __init__(self, image):
+        Item.__init__(self, image)
+        self.price = 100
+        self.name = "Chocolate"
