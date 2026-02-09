@@ -12,3 +12,8 @@ class CatCollar(Item):
         Item.__init__(self, image)
         self.price = 400
         self.name = "Cat Collar"
+
+    def apply_effect(self, base_dict):
+        cat = base_dict.get("cat")
+        if cat:
+            cat.activate()

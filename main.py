@@ -1,6 +1,7 @@
 import pygame
 
 from game.button import Button
+from game.cat import Cat
 from game.heart import Heart
 from game.heartBank import HeartBank
 from game.items.cat_collar import CatCollar
@@ -10,11 +11,28 @@ from game.items.house_key import HouseKey
 from game.items.letter import Letter
 from game.shop import Shop
 
+def load_frames_from_sheet(path, frame_width, frame_height):
+    sheet = pygame.image.load(path).convert_alpha()
+    sheet_width, sheet_height = sheet.get_size()
+
+    frames = []
+    for x in range(0, sheet_width, frame_width):
+        frame = pygame.Surface((frame_width, frame_height), pygame.SRCALPHA)
+        frame.blit(sheet, (0,0), (x, 0, frame_width, frame_height))
+
+        new_w = int(frame_width * 3)
+        new_h = int(frame_height * 3)
+        frame = pygame.transform.scale(frame, (new_w, new_h))
+
+        frames.append(frame)
+
+    return frames
+
 #initialization
 pygame.init()
 
-WIDTH, HEIGHT = 1820, 1080
-#WIDTH, HEIGHT = 2560, 1440
+#WIDTH, HEIGHT = 1820, 1080
+WIDTH, HEIGHT = 2560, 1440
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Valentinstag ❤️")
 
@@ -56,6 +74,18 @@ letter_image = pygame.image.load("assets/images/letter.png").convert_alpha()
 
 button_image = pygame.image.load("assets/images/button.png").convert_alpha()
 
+walk_frames = load_frames_from_sheet(
+    "assets/images/cat_walk.png",
+    frame_width=32,
+    frame_height=32
+)
+
+idle_frames = load_frames_from_sheet(
+    "assets/images/cat_idle.png",
+    frame_width=32,
+    frame_height=32
+)
+
 heart = Heart(image=heart_image, position=(WIDTH // 2, HEIGHT // 2.5))
 
 bank = HeartBank(image=bank_image, position=(300, 100))
@@ -72,11 +102,19 @@ diamond_ring = DiamondRing(image=ring_image)
 
 house_key = HouseKey(image=key_image)
 
-letter = Letter(image=letter_image)
+letter = Letter(image=letter_image, msg_position=(WIDTH // 2, HEIGHT // 2))
+
+cat = Cat(walk_frames, idle_frames, shop.rect)
 
 items = [ chocolate, house_key, cat_collar, diamond_ring, letter]
 
 shop.init_items(items)
+
+#not every items needs heart or cat class
+base_dict = {
+                "heart": heart,
+                "cat": cat
+            }
 
 auto_timer = 0
 
@@ -86,6 +124,7 @@ while running:
     dt = clock.tick(60) / 1000
     auto_timer += dt
     heart.update(dt)
+    cat.update(dt)
 
     if auto_timer >= 1:  # triggers every second
         automatic_hearts = heart.automatic_hearts_per_second
@@ -106,7 +145,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
-                shop.handle_click(mouse_pos, bank, heart)
+                shop.handle_click(mouse_pos, bank, base_dict)
 
     screen.blit(background, (0, 0))
 
@@ -114,6 +153,8 @@ while running:
     bank.draw(screen, heart)
     shop.draw(screen, bank)
     quit_button.draw(screen)
+    letter.draw_message(screen)
+    cat.draw(screen)
 
     pygame.display.flip()
 

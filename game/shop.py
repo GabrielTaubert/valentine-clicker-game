@@ -44,18 +44,13 @@ class Shop:
             item.set_position((x, y))
             x += item.rect.width + self.spacing
 
-    def handle_click(self, mouse_pos, bank, heart):
+    def handle_click(self, mouse_pos, bank, base_dict):
         for item in self.items:
 
             if item.rect.collidepoint(mouse_pos):
 
                 if item.is_bought:
                     return
-
-                #not every items needs heart class
-                base_dict = {
-                    "heart": heart,
-                }
 
                 if self.check_item_buyable(item, bank):
                     self.buy_item(item, bank, base_dict)
